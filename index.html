@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encuesta de Clima Organizacional - IMPULSARH</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .likert-label { font-size: 0.75rem; text-align: center; margin-top: 0.5rem; color: #4b5563; }
+        input[type="radio"]:checked + label { background-color: #2563eb; color: white; border-color: #2563eb; }
+        .section-card { transition: all 0.3s ease; border-left: 4px solid transparent; }
+        .section-card:hover { border-left-color: #2563eb; }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-900">
+
+    <div class="max-w-4xl mx-auto py-12 px-4">
+        <div id="headerSection" class="bg-white rounded-xl shadow-sm p-8 mb-8 text-center border-t-8 border-blue-600">
+            <h1 class="text-3xl font-extrabold text-gray-900 mb-2 uppercase">Encuesta de Clima Organizacional</h1>
+            <p class="text-blue-600 font-medium mb-6 italic text-xl">IMPULSARH - Consultoría</p>
+            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 text-left">
+                <p class="text-sm text-blue-700"><strong>Confidencialidad:</strong> Esta encuesta es totalmente confidencial. Sus respuestas nos ayudarán a trabajar en las áreas de oportunidad reales de la empresa.</p>
+            </div>
+        </div>
+
+        <form id="surveyForm" class="space-y-8">
+            <div class="bg-white rounded-xl shadow-sm p-8">
+                <h2 class="text-xl font-bold mb-6 text-gray-800 border-b pb-2">INFORMACIÓN GENERAL</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <input type="text" name="nombre" required placeholder="Nombre Completo" class="border rounded-lg p-3 w-full">
+                    <input type="text" name="puesto" required placeholder="Puesto" class="border rounded-lg p-3 w-full">
+                    <input type="text" name="area" required placeholder="Área / Departamento" class="border rounded-lg p-3 w-full">
+                    <div class="flex flex-col"><label class="text-xs text-gray-500 ml-1">Fecha de Ingreso</label>
+                    <input type="date" name="fecha_ingreso" required class="border rounded-lg p-3 w-full"></div>
+                </div>
+            </div>
+
+            <div id="questionsContainer" class="space-y-8"></div>
+
+            <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-5 rounded-2xl shadow-xl text-lg transition-transform active:scale-95">
+                Enviar Encuesta Finalizada
+            </button>
+        </form>
+
+        <div id="successMessage" class="hidden bg-white rounded-2xl shadow-2xl p-12 text-center border-t-8 border-green-500">
+            <h2 class="text-4xl font-black text-gray-900 mb-4">¡GRACIAS POR TU PARTICIPACIÓN!</h2>
+            <p class="text-xl text-gray-600">Tus respuestas han sido recibidas con total confidencialidad.</p>
+            <p class="mt-4 text-blue-600 font-medium">IMPULSARH - Consultoría en Desarrollo Organizacional</p>
+        </div>
+    </div>
+
+    <script>
+        // PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbywq7X6irqn2g7R4i-pSVS1Wd9qAUY9Bdtpe0-BPP7cB0qzb9RC7KJsfxZYGDFh5iOG/exec';
+
+        const sections = [
+            { title: "NIVEL INSTITUCIONAL", questions: ["Creo que la Empresa ha incrementado su nivel de profesionalismo en los últimos años.", "Los productos de la Empresa son de alta calidad.", "Me gusta la imagen de la Empresa.", "La Empresa se encuentra en un proceso claro de mejora continua.", "Pienso que esta Empresa en un buen lugar para trabajar."] },
+            { title: "COMFORT Y SEGURIDAD", questions: ["Mi lugar de trabajo es funcional, limpio y adecuado para trabajar.", "Las herramientas y materiales a mi alcance me permiten realizar mi trabajo de la mejor manera.", "El horario de trabajo me parece justo.", "Cuento con la protección adecuada para desempeñar mis tareas sin riesgo.", "Existen procesos claros y ordenados de evacuación y protección en caso de cualquier contingencia."] },
+            { title: "COMPROMISO", questions: ["Conozco y entrego los resultados que se esperan de mí.", "Busco continuamente como mejorar las cosas.", "Estoy consciente de mis oportunidades de mejora.", "Valoro mi puesto de trabajo y pienso permanecer por un tiempo razonable.", "Llevo a cabo mi trabajo con esfuerzo y calidad.", "Me siento alentado por mis jefes y superiores.", "Conozco el valor de mi aportación a la Empresa."] },
+            { title: "DESARROLLO PROFESIONAL Y CERTEZA LABORAL", questions: ["Estoy enterado perfectamente de cuáles son mis funciones y responsabilidades.", "Conozco bien cuáles son las decisiones que puedo tomar y lo puedo hacer libremente.", "Cuento con objetivos definidos.", "He acordado mi plan de carrera con mi líder.", "Existen oportunidades de desarrollo en la Empresa.", "Si sobrepaso mis objetivos, tengo altas posibilidades de ser promovido a una posición mejor.", "Mi desempeño es evaluado con objetividad y justicia.", "He recibido coaching o consejos para mejorar mi desempeño.", "He aprendido mucho en esta Empresa.", "Me siento con la experiencia y conocimientos adecuados para desempeñar mi trabajo.", "La Empresa tiene un plan de capacitación adecuado.", "Para mí ha llegado el momento de buscar trabajo en otra Empresa."] },
+            { title: "CULTURA RELACIONAL", questions: ["La Empresa se preocupa de que todos sean respetados y tratados en forma adecuada.", "El ambiente de trabajo es agradable.", "La relación que tengo con mis compañeros favorece mi aprendizaje.", "Me llevo bien con la mayoría de mis compañeros.", "La Empresa está claramente en contra del acoso laboral y efectúa acciones para erradicarlo.", "Hay orden y seguimiento de las políticas y procesos.", "Es fácil gestionar cualquier asunto con los demás departamentos de la Empresa.", "Se respetan los procesos en tiempo y forma.", "La mayoría de la gente demuestra ser congruente y responsable con sus resultados.", "Los hombres y las mujeres tienen las mismas oportunidades en la Empresa."] },
+            { title: "CALIDAD DE LIDERAZGO", questions: ["Mi líder tiene un perfil adecuado para la posición que desempeña.", "Recibo retroalimentación útil de mi líder.", "Mi líder trabaja para mejorar las cosas.", "Mi líder me escucha atentamente.", "Las exigencias de mi líder son razonables.", "Mi líder me trata con amabilidad y respeto.", "Mi líder me evalúa con justicia.", "Mi líder tiene una imagen creíble y confiable.", "Mi líder logra formar equipos efectivos de trabajo."] },
+            { title: "RECONOCIMIENTO Y COMPENSACIÓN", questions: ["Me han reconocido cuando logro una contribución importante.", "Mi sueldo y prestaciones son justos para el tipo de trabajo que desempeño.", "Existen posibilidades reales de ser promovido.", "Existen posiciones con sueldos muy atractivos en la Empresa."] },
+            { title: "COMUNICACIÓN", questions: ["Conozco la organización de la Empresa.", "Existe apertura para escuchar las opiniones de los empleados.", "Las políticas y procesos son claros y accesibles para consulta.", "Es fácil solicitar y recibir información en la Empresa.", "Existe un medio o plataforma oficial de comunicación dentro de la Empresa."] }
+        ];
+
+        const container = document.getElementById('questionsContainer');
+        let qIdx = 1;
+        sections.forEach(s => {
+            const div = document.createElement('div');
+            div.className = "bg-white rounded-xl shadow-sm p-8 section-card";
+            div.innerHTML = `<h2 class="text-xl font-bold mb-6 text-gray-800 border-b pb-2 uppercase">${s.title}</h2><div class="space-y-8">` + 
+            s.questions.map(q => {
+                const id = `q${qIdx++}`;
+                return `<div><p class="font-semibold mb-4">${qIdx-1}. ${q}</p><div class="grid grid-cols-5 gap-2">` +
+                [1,2,3,4,5].map(v => `<div class="flex flex-col items-center"><input type="radio" id="${id}_${v}" name="${id}" value="${v}" required class="hidden peer"><label for="${id}_${v}" class="w-full py-3 border rounded-lg text-center cursor-pointer font-bold peer-checked:bg-blue-600 peer-checked:text-white">${v}</label></div>`).join('') +
+                `</div></div>`;
+            }).join('') + `</div>`;
+            container.appendChild(div);
+        });
+
+        document.getElementById('surveyForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true; btn.innerText = "Enviando...";
+            const data = Object.fromEntries(new FormData(e.target));
+            try {
+                await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
+                document.getElementById('surveyForm').classList.add('hidden');
+                document.getElementById('headerSection').classList.add('hidden');
+                document.getElementById('successMessage').classList.remove('hidden');
+                window.scrollTo(0,0);
+            } catch (err) { alert("Error al enviar. Verifica tu conexión."); btn.disabled = false; btn.innerText = "Enviar"; }
+        };
+    </script>
+</body>
+</html>
